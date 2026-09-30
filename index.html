@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scout Law Feud · Pack 149</title>
+  <meta name="description" content="A Family Feud–style game board for learning the Scout Law, made for Cub Scout Pack 149.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Nunito:wght@700;800;900&family=Titan+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%231a4fd8' stroke='%23ffc934' stroke-width='8'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%23ffc934' font-family='Arial Black'>SL</text></svg>">
+</head>
+<body>
+<div id="stage">
+  <div class="rays" aria-hidden="true"></div>
+  <div class="spot spot-l" aria-hidden="true"></div>
+  <div class="spot spot-r" aria-hidden="true"></div>
+
+  <!-- 1. Start screen (a click is needed before browsers allow sound) -->
+  <section id="splash" class="scene is-active">
+    <div class="splash-inner">
+      <p class="eyebrow">Cub Scout Pack 149</p>
+      <h1 class="logo">
+        <span class="logo-top">Scout Law</span>
+        <span class="logo-main">Feud!</span>
+      </h1>
+      <button id="startBtn" class="start-btn" type="button">Start the show</button>
+      <p class="splash-tip">Opens full screen with sound. Press <kbd>?</kbd> anytime to see the controls.</p>
+    </div>
+  </section>
+
+  <!-- 2. Opening -->
+  <section id="intro" class="scene" aria-label="Opening">
+    <p class="presents">Pack 149 presents</p>
+    <div class="logo-badge">
+      <div class="badge-bulbs bulbs" aria-hidden="true"></div>
+      <h1 class="logo">
+        <span class="logo-top">Scout Law</span>
+        <span class="logo-main">Feud!</span>
+      </h1>
+    </div>
+    <p class="skip-tip">Click to skip</p>
+  </section>
+
+  <!-- 3. The board -->
+  <section id="board" class="scene" aria-label="Game board">
+    <div class="board-frame">
+      <div class="frame-bulbs bulbs" aria-hidden="true"></div>
+      <header class="board-head">
+        <div class="head-title">Scout Law <b>Feud</b></div>
+        <div class="score" aria-live="polite">
+          <span id="foundCount">0</span>
+          <small>of 12 found</small>
+        </div>
+        <div class="head-pack">Pack <b>149</b></div>
+      </header>
+      <div class="slots" id="slots"></div>
+    </div>
+  </section>
+
+  <!-- The Cubmaster host -->
+  <div id="host" class="host" aria-hidden="true">
+    <svg viewBox="0 0 300 620" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="shirtG" x1="0" x2="1">
+          <stop offset="0" stop-color="#c4b083"/>
+          <stop offset=".5" stop-color="#ddcaa0"/>
+          <stop offset="1" stop-color="#bfaa7c"/>
+        </linearGradient>
+        <linearGradient id="pantsG" x1="0" x2="1">
+          <stop offset="0" stop-color="#3f4d66"/>
+          <stop offset=".5" stop-color="#52627d"/>
+          <stop offset="1" stop-color="#3d4a62"/>
+        </linearGradient>
+        <linearGradient id="micG" x1="0" x2="1">
+          <stop offset="0" stop-color="#6b7280"/>
+          <stop offset=".5" stop-color="#e5e7eb"/>
+          <stop offset="1" stop-color="#6b7280"/>
+        </linearGradient>
+      </defs>
+      <ellipse class="shadow" cx="150" cy="592" rx="100" ry="15" fill="rgba(0,0,0,.35)"/>
+      <g class="body">
+        <!-- slate pants and loafers -->
+        <path d="M98 384 L149 384 L145 566 L109 566 Z" fill="url(#pantsG)"/>
+        <path d="M151 384 L202 384 L192 566 L156 566 Z" fill="url(#pantsG)"/>
+        <line x1="150" y1="386" x2="150" y2="420" stroke="#34405a" stroke-width="2"/>
+        <path d="M100 566 q-6 14 10 16 h40 q4 -8 -3 -16 Z" fill="#57524c"/>
+        <path d="M200 566 q6 14 -10 16 h-40 q-4 -8 3 -16 Z" fill="#57524c"/>
+
+        <!-- waving arm (his left: unit numeral 149) -->
+        <g class="arm-wave">
+          <path d="M197 214 L212 302" stroke="#f3cfae" stroke-width="22" stroke-linecap="round"/>
+          <path d="M197 214 L206 262" stroke="#d0bd8f" stroke-width="32" stroke-linecap="round"/>
+          <g transform="rotate(-10 204 238)">
+            <rect x="188" y="230" width="32" height="14" rx="2" fill="#c8102e" stroke="#fff" stroke-width="1.5"/>
+            <text x="204" y="241.5" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="11" fill="#fff" text-anchor="middle">149</text>
+          </g>
+          <path d="M212 300 L218 356" stroke="#f3cfae" stroke-width="20" stroke-linecap="round"/>
+          <circle cx="219" cy="366" r="13" fill="#f3cfae"/>
+          <path d="M207 360 q-7 -4 -7 6" stroke="#f3cfae" stroke-width="7" stroke-linecap="round" fill="none"/>
+        </g>
+
+        <!-- tan uniform shirt (slim build) -->
+        <path d="M101 204 Q150 188 199 204 L211 300 L205 382 L95 382 L89 300 Z" fill="url(#shirtG)"/>
+        <!-- dark green shoulder loops -->
+        <path d="M104 204 L128 196" stroke="#2f4a33" stroke-width="7" stroke-linecap="round"/>
+        <path d="M196 204 L172 196" stroke="#2f4a33" stroke-width="7" stroke-linecap="round"/>
+        <!-- pockets with flaps -->
+        <rect x="106" y="240" width="34" height="40" rx="4" fill="#cdb98c" stroke="#a48f63" stroke-width="2"/>
+        <rect x="160" y="240" width="34" height="40" rx="4" fill="#cdb98c" stroke="#a48f63" stroke-width="2"/>
+        <path d="M106 240 h34 v11 q-17 7 -34 0 Z" fill="#bca77a"/>
+        <path d="M160 240 h34 v11 q-17 7 -34 0 Z" fill="#bca77a"/>
+        <!-- world crest style patch above his left pocket -->
+        <circle cx="177" cy="228" r="8" fill="#4b2e83" stroke="#fff" stroke-width="2"/>
+        <path d="M177 222 q3 4 0 10 q-3 -6 0 -10 M172 227 q5 1 5 5 M182 227 q-5 1 -5 5" stroke="#fff" stroke-width="1.5" fill="none"/>
+        <!-- red BSA strip above his right pocket -->
+        <rect x="112" y="229" width="22" height="6" rx="1" fill="#c8102e"/>
+        <line x1="150" y1="262" x2="150" y2="374" stroke="#a48f63" stroke-width="2"/>
+        <circle cx="150" cy="300" r="2.6" fill="#a48f63"/>
+        <circle cx="150" cy="330" r="2.6" fill="#a48f63"/>
+        <circle cx="150" cy="358" r="2.6" fill="#a48f63"/>
+        <!-- dark olive web belt -->
+        <rect x="95" y="370" width="110" height="15" fill="#3c4a2c"/>
+        <rect x="140" y="368" width="20" height="19" rx="2" fill="#4a4a4a" stroke="#2a2a2a" stroke-width="2"/>
+
+        <!-- neck and collar -->
+        <rect x="137" y="160" width="26" height="34" fill="#eab993"/>
+        <path d="M128 194 L150 208 L138 222 Z" fill="#cdb98c" stroke="#a48f63" stroke-width="1.5"/>
+        <path d="M172 194 L150 208 L162 222 Z" fill="#cdb98c" stroke="#a48f63" stroke-width="1.5"/>
+
+        <!-- dark green neckerchief: rolled around the collar, ends hanging down -->
+        <path d="M124 190 Q150 204 176 190" stroke="#24452e" stroke-width="12" stroke-linecap="round" fill="none"/>
+        <path d="M138 204 L144 214 L136 300 L126 296 Z" fill="#2c5237"/>
+        <path d="M158 204 L152 214 L164 300 L174 296 Z" fill="#24452e"/>
+        <rect x="140" y="206" width="16" height="14" rx="4" fill="#c9a24a" stroke="#8f7222" stroke-width="1.5"/>
+
+        <!-- head (friendly cartoon style, slightly oversized) -->
+        <g class="head">
+         <g transform="translate(150 172) scale(1.14) translate(-150 -172)">
+          <ellipse cx="101" cy="122" rx="10" ry="12" fill="#ecbd98"/>
+          <ellipse cx="199" cy="122" rx="10" ry="12" fill="#ecbd98"/>
+          <path d="M101 122 q2 -6 5 0" stroke="#d9a07a" stroke-width="2" fill="none"/>
+          <ellipse cx="150" cy="120" rx="50" ry="54" fill="#f6d3b3"/>
+          <!-- short brown hair, side part on his right, swept across with volume -->
+          <path d="M101 120 C92 72 116 46 152 46 C188 46 210 70 200 118 C197 100 192 90 186 84 C168 78 140 76 118 84 C110 94 104 106 101 120 Z" fill="#6e4a2c"/>
+          <path d="M119 84 C122 56 162 44 196 66 C203 76 202 90 199 102 C190 82 162 74 119 84 Z" fill="#865b37"/>
+          <path d="M140 60 C160 52 182 56 194 68" stroke="#9c6b43" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <path d="M121 58 q-6 12 -2 26" stroke="#4e321c" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <!-- soft, raised brows -->
+          <path d="M122 104 q9 -5 17 -1" stroke="#6e4a2c" stroke-width="4" stroke-linecap="round" fill="none"/>
+          <path d="M161 103 q8 -4 17 1" stroke="#6e4a2c" stroke-width="4" stroke-linecap="round" fill="none"/>
+          <!-- warm dark eyes -->
+          <g class="eyes">
+            <ellipse cx="131" cy="120" rx="6" ry="7.5" fill="#2b2118"/>
+            <ellipse cx="169" cy="120" rx="6" ry="7.5" fill="#2b2118"/>
+            <circle cx="133" cy="117" r="2.2" fill="#fff"/>
+            <circle cx="171" cy="117" r="2.2" fill="#fff"/>
+          </g>
+          <!-- nose -->
+          <path d="M147 128 q-3 8 1 10 q4 1 6 -1" stroke="#d9a07a" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <!-- rosy cheeks -->
+          <ellipse cx="117" cy="138" rx="8" ry="5" fill="#f4978e" opacity=".35"/>
+          <ellipse cx="183" cy="138" rx="8" ry="5" fill="#f4978e" opacity=".35"/>
+          <!-- gentle smile with a hint of teeth -->
+          <path d="M130 145 Q150 167 170 145 Q150 150 130 145 Z" fill="#8a2d2d"/>
+          <path d="M133.5 146 Q150 150.5 166.5 146 L164.5 150.5 Q150 154.5 135.5 150.5 Z" fill="#fff"/>
+          <path d="M127 143 q-2 -1 -3 -3 M173 143 q2 -1 3 -3" stroke="#d9a07a" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path class="sweat" d="M204 78 q8 12 0 18 q-8 -6 0 -18 Z" fill="#7cc4ff" stroke="#fff" stroke-width="1.5"/>
+         </g>
+        </g>
+
+        <!-- microphone arm (his right: U.S. flag patch) -->
+        <g class="arm-mic">
+          <path d="M103 214 L90 300" stroke="#f3cfae" stroke-width="22" stroke-linecap="round"/>
+          <path d="M103 214 L95 262" stroke="#d0bd8f" stroke-width="32" stroke-linecap="round"/>
+          <g transform="rotate(8 96 234)">
+            <rect x="83" y="226" width="26" height="16" fill="#fff" stroke="#999" stroke-width=".8"/>
+            <rect x="83" y="226" width="11" height="8.5" fill="#1f3a8a"/>
+            <path d="M94 228 h15 M94 231.6 h15 M83 235.4 h26 M83 239 h26" stroke="#c8102e" stroke-width="1.8"/>
+            <rect x="84" y="244" width="24" height="7" rx="1" fill="#1f2a44" stroke="#ffc934" stroke-width="1"/>
+          </g>
+          <path d="M90 300 L128 264" stroke="#f3cfae" stroke-width="20" stroke-linecap="round"/>
+          <line x1="136" y1="292" x2="140" y2="198" stroke="#1f2937" stroke-width="7" stroke-linecap="round"/>
+          <circle cx="140" cy="194" r="10" fill="url(#micG)" stroke="#374151" stroke-width="2"/>
+          <circle cx="133" cy="261" r="13" fill="#f3cfae"/>
+          <path d="M126 254 h14 M125 260.5 h15 M126 267 h13" stroke="#dca47b" stroke-width="2.3" stroke-linecap="round"/>
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Wrong answer strike -->
+  <div id="strike" class="strike" aria-live="assertive"></div>
+
+  <!-- Big explanation card -->
+  <div id="reveal" class="overlay" role="dialog" aria-modal="true" aria-labelledby="cardName">
+    <article class="law-card" id="lawCard">
+      <div class="card-left">
+        <div class="card-icon" id="cardIcon"></div>
+        <div class="card-num" id="cardNum"></div>
+      </div>
+      <div class="card-right">
+        <p class="card-eyebrow">A Scout is</p>
+        <h2 class="card-name" id="cardName"></h2>
+        <p class="card-meaning" id="cardMeaning"></p>
+        <div class="card-example">
+          <span class="example-label">Looks like</span>
+          <p id="cardExample"></p>
+        </div>
+      </div>
+      <p class="card-hint">Click or press Space to go back to the board</p>
+    </article>
+  </div>
+
+  <!-- All 12 found -->
+  <div id="finale" class="overlay finale" role="dialog" aria-modal="true" aria-label="The whole Scout Law">
+    <div class="finale-inner">
+      <p class="finale-lead">A Scout is…</p>
+      <ol class="finale-words" id="finaleWords"></ol>
+      <p class="finale-banner">Pack 149 knows the Scout Law!</p>
+    </div>
+  </div>
+
+  <!-- Presenter controls -->
+  <div id="help" class="overlay help" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <div class="help-panel">
+      <h2 id="helpTitle">Presenter controls</h2>
+      <div class="help-cols">
+        <dl class="keys">
+          <dt><kbd>Click a slot</kbd></dt><dd>Reveal that law</dd>
+          <dt><kbd>1</kbd>–<kbd>9</kbd> <kbd>0</kbd> <kbd>-</kbd> <kbd>=</kbd></dt><dd>Reveal slot 1–12</dd>
+          <dt><kbd>X</kbd></dt><dd>Wrong answer buzzer</dd>
+          <dt><kbd>Space</kbd> / <kbd>Esc</kbd></dt><dd>Close the card</dd>
+          <dt><kbd>A</kbd> · <kbd>O</kbd></dt><dd>Applause · Crowd “ooooh”</dd>
+          <dt><kbd>M</kbd></dt><dd>Background music on / off</dd>
+          <dt><kbd>F</kbd></dt><dd>Full screen</dd>
+          <dt><kbd>I</kbd></dt><dd>Replay the opening</dd>
+          <dt><kbd>Shift</kbd>+<kbd>R</kbd></dt><dd>Reset the board</dd>
+        </dl>
+        <div>
+          <h3>Slot numbers</h3>
+          <ol class="cheat" id="cheat"></ol>
+        </div>
+      </div>
+      <p class="help-close">Press <kbd>?</kbd> or <kbd>Esc</kbd> to close</p>
+    </div>
+  </div>
+
+  <nav class="dock" aria-label="Presenter controls">
+    <button type="button" data-action="strike" title="Wrong answer (X)">✕ Wrong</button>
+    <button type="button" data-action="music" title="Music (M)">♪ Music</button>
+    <button type="button" data-action="fullscreen" title="Full screen (F)">⛶</button>
+    <button type="button" data-action="help" title="Controls (?)">?</button>
+  </nav>
+
+  <canvas id="confetti" aria-hidden="true"></canvas>
+</div>
+
+<script src="js/laws.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

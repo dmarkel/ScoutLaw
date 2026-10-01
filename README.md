@@ -31,11 +31,11 @@ A game-show style board for teaching the 12 points of the Scout Law to Cub Scout
 | `1`–`9`, `0`, `-`, `=` | Reveal slot 1–12 |
 | `X` | Wrong answer buzzer |
 | `Space` / `Esc` | Close the card |
-| `T` | Flip every card and jump to the finale |
+| `Shift` + `F` | Flip every card and jump to the finale |
 | `A` / `O` | Applause / crowd "ooooh" (the host claps / gasps) |
 | `S` | Host gives the Scout sign to quiet the room (press again to put it down) |
 | `E` | Host cups his ear: "I can't hear you!" |
-| `P` / `K` | Host points at the room / thinks (press `K` again to stop) |
+| `P` / `T` | Host points at the room / thinks (press `T` again to stop) |
 | `M` | Background music on/off |
 | `F` | Full screen |
 | `I` | Replay the opening |

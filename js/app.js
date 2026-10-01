@@ -418,7 +418,7 @@
     hostDo("wave", 2200);
   }
 
-  // T: flip every card that's still closed, then go to the finale.
+  // Shift+F: flip every card that's still closed, then go to the finale.
   function revealAll() {
     if (current === "splash" || busy || finale.classList.contains("is-open")) return;
     if (current === "intro") {
@@ -552,6 +552,7 @@
       else if (current === "intro") goToBoard(true);
       return;
     }
+    if (k === "F" && e.shiftKey) { revealAll(); return; }
     if (k in KEY_TO_SLOT) { revealLaw(KEY_TO_SLOT[k]); return; }
     switch (k) {
       case "x": case "X": strike(); break;
@@ -562,8 +563,7 @@
       case "s": case "S": hostMove("scoutsign", 0); break;
       case "e": case "E": hostMove("ear", 3000); break;
       case "p": case "P": hostMove("point", 2500); break;
-      case "t": case "T": revealAll(); break;
-      case "k": case "K": hostMove("thinking", 0); break;
+      case "t": case "T": hostMove("thinking", 0); break;
       case "i": case "I": startIntro(); break;
       case "R": if (e.shiftKey) resetBoard(); break;
     }

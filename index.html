@@ -68,6 +68,16 @@
       <img class="pose" data-pose="cheer" src="img/host/host-cheer.webp" alt="" decoding="async">
       <img class="pose" data-pose="oops" src="img/host/host-oops.webp" alt="" decoding="async">
       <img class="pose" data-pose="thumbs" src="img/host/host-thumbs.webp" alt="" decoding="async">
+      <img class="pose" data-pose="cheer2" src="img/host/host-cheer2.webp" alt="" decoding="async">
+      <img class="pose" data-pose="dance" src="img/host/host-dance.webp" alt="" decoding="async">
+      <img class="pose" data-pose="clap" src="img/host/host-clap.webp" alt="" decoding="async">
+      <img class="pose" data-pose="laugh" src="img/host/host-laugh.webp" alt="" decoding="async">
+      <img class="pose" data-pose="shrug" src="img/host/host-shrug.webp" alt="" decoding="async">
+      <img class="pose" data-pose="gasp" src="img/host/host-gasp.webp" alt="" decoding="async">
+      <img class="pose" data-pose="scoutsign" src="img/host/host-scoutsign.webp" alt="" decoding="async">
+      <img class="pose" data-pose="ear" src="img/host/host-ear.webp" alt="" decoding="async">
+      <img class="pose" data-pose="point" src="img/host/host-point.webp" alt="" decoding="async">
+      <img class="pose" data-pose="thinking" src="img/host/host-thinking.webp" alt="" decoding="async">
     </div>
   </div>
 
@@ -78,8 +88,7 @@
   <div id="reveal" class="overlay" role="dialog" aria-modal="true" aria-labelledby="cardName">
     <article class="law-card" id="lawCard">
       <div class="card-left">
-        <div class="card-icon" id="cardIcon"></div>
-        <div class="card-num" id="cardNum"></div>
+        <img class="card-pose" id="cardPose" alt="">
       </div>
       <div class="card-right">
         <p class="card-eyebrow">A Scout is</p>
@@ -90,6 +99,8 @@
           <p id="cardExample"></p>
         </div>
       </div>
+      <div class="card-icon" id="cardIcon"></div>
+      <div class="card-num" id="cardNum"></div>
       <p class="card-hint">Click or press Space to go back to the board</p>
     </article>
   </div>
@@ -114,6 +125,9 @@
           <dt><kbd>X</kbd></dt><dd>Wrong answer buzzer</dd>
           <dt><kbd>Space</kbd> / <kbd>Esc</kbd></dt><dd>Close the card</dd>
           <dt><kbd>A</kbd> · <kbd>O</kbd></dt><dd>Applause · Crowd “ooooh”</dd>
+          <dt><kbd>S</kbd></dt><dd>Host gives the Scout sign (quiet down)</dd>
+          <dt><kbd>E</kbd></dt><dd>Host: “I can't hear you!”</dd>
+          <dt><kbd>P</kbd> · <kbd>T</kbd></dt><dd>Host points at the room · thinks</dd>
           <dt><kbd>M</kbd></dt><dd>Background music on / off</dd>
           <dt><kbd>F</kbd></dt><dd>Full screen</dd>
           <dt><kbd>I</kbd></dt><dd>Replay the opening</dd>
@@ -130,6 +144,7 @@
 
   <nav class="dock" aria-label="Presenter controls">
     <button type="button" data-action="strike" title="Wrong answer (X)">✕ Wrong</button>
+    <button type="button" data-action="sign" title="Scout sign, quiet down (S)">✌ Quiet</button>
     <button type="button" data-action="music" title="Music (M)">♪ Music</button>
     <button type="button" data-action="fullscreen" title="Full screen (F)">⛶</button>
     <button type="button" data-action="help" title="Controls (?)">?</button>
@@ -149,6 +164,8 @@
   </div>
   <p class="rotate-title">Turn your phone sideways</p>
   <p class="rotate-sub">The game board only fits when your screen is wide.</p>
+  <button type="button" class="rotate-btn" id="rotateBtn" hidden>Turn it for me</button>
+  <p class="rotate-tip" id="rotateTip">Screen not turning? Make sure <b>auto-rotate</b> is on in your phone's quick settings.</p>
 </div>
 
 <script src="js/laws.js"></script>

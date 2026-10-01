@@ -158,6 +158,38 @@
     if (ms) poseTimer = setTimeout(() => setPose("idle"), ms);
   }
 
+  // Pick a reaction at random, never the same one twice in a row.
+  const CHEERS = [["cheer", "hop"], ["cheer2", "hop"], ["dance"], ["clap"], ["thumbs", "hop"], ["laugh"]];
+  const OOPSES = [["oops", "shake"], ["shrug", "shake"]];
+  const FIDGETS = ["wave", "thumbs", "laugh", "thinking", "point", "clap"];
+  const lastPick = new Map();
+  function pick(list) {
+    let choice;
+    do { choice = list[(Math.random() * list.length) | 0]; } while (list.length > 1 && choice === lastPick.get(list));
+    lastPick.set(list, choice);
+    return choice;
+  }
+
+  // While the board sits quietly, the host does a little something now and then.
+  let lastAction = Date.now();
+  const touch = () => { lastAction = Date.now(); };
+  setInterval(() => {
+    const quiet = Date.now() - lastAction > 15000;
+    const idle = poses.idle.classList.contains("is-shown");
+    const overlay = reveal.classList.contains("is-open") || finale.classList.contains("is-open") || help.classList.contains("is-open");
+    if (current === "board" && quiet && idle && !busy && !overlay) {
+      hostDo(pick(FIDGETS), 1900);
+      lastAction = Date.now() - 15000 + 6000 + Math.random() * 8000;   // next one in ~6–14s
+    }
+  }, 1000);
+
+  // Presenter "host moves": press once to show, again to put down.
+  function hostMove(name, ms) {
+    touch();
+    if (poses[name].classList.contains("is-shown")) { hostDo("idle"); return; }
+    hostDo(name, ms);
+  }
+
   function resetHost() {
     host.style.transition = "none";
     host.className = "host";
@@ -223,6 +255,7 @@
       return;
     }
     const slot = slots[i];
+    touch();
     if (opened[i]) {
       Sound.ding();
       hostDo("present", 1400);
@@ -243,7 +276,7 @@
       const r = slot.getBoundingClientRect();
       Confetti.burst(r.left + r.width / 2, r.top + r.height / 2, 90);
     }, 330);
-    setTimeout(() => hostDo("cheer", 1800, "hop"), 650);
+    setTimeout(() => { const [pose, motion] = pick(CHEERS); hostDo(pose, 1800, motion); }, 650);
     setTimeout(() => slot.classList.remove("just-opened"), 1800);
     setTimeout(() => { openCard(i); busy = false; }, 1500);
   }
@@ -251,6 +284,7 @@
   function openCard(i) {
     const law = LAWS[i];
     $("#cardIcon").textContent = law.icon;
+    $("#cardPose").src = lawPoseSrc(i);
     $("#cardNum").textContent = `#${i + 1} of 12`;
     $("#cardName").textContent = law.name;
     $("#cardMeaning").textContent = law.meaning;
@@ -271,6 +305,11 @@
     card.classList.add("animating");
     card.classList.remove("from-slot");
     card.style.transform = "none";
+  }
+
+  function lawPoseSrc(i) {
+    const n = String(i + 1).padStart(2, "0");
+    return `img/laws/law-${n}-${LAWS[i].name.toLowerCase()}.webp`;
   }
 
   function closeCard() {
@@ -297,7 +336,9 @@
     }
     Sound.buzzer();
     Sound.aww();
-    hostDo("oops", 1700, "shake");
+    const [pose, motion] = pick(OOPSES);
+    hostDo(pose, 1700, motion);
+    touch();
     clearTimeout(strikeTimer);
     strikeTimer = setTimeout(() => {
       strikeEl.querySelectorAll(".x-box").forEach((x) => x.classList.add("out"));
@@ -331,8 +372,9 @@
       Sound.cheer();
       Sound.applause(0.4, 6, 1);
       flashBulbs(4000);
-      hostDo("cheer", 0, "hop");
-      at(2600, () => hostDo("thumbs"));
+      hostDo("cheer2", 0, "hop");
+      at(1700, () => hostDo("dance"));
+      at(3400, () => hostDo("thumbs", 0, "hop"));
       Confetti.rain(7000);
     });
     at(end + 1500, () => { finaleDone = true; });
@@ -387,7 +429,24 @@
       .then(() => screen.orientation?.lock?.("landscape"))
       .catch(() => {});
     startIntro();
+    LAWS.forEach((_, i) => { new Image().src = lawPoseSrc(i); });
   });
+
+  // Phones with auto-rotate off: on Android, go full screen and turn to landscape for them.
+  const rotateBtn = $("#rotateBtn");
+  if (document.documentElement.requestFullscreen && screen.orientation?.lock) {
+    rotateBtn.hidden = false;
+    rotateBtn.addEventListener("click", async () => {
+      try {
+        await document.documentElement.requestFullscreen();
+        await screen.orientation.lock("landscape");
+      } catch {
+        if (document.fullscreenElement) document.exitFullscreen();
+        rotateBtn.hidden = true;
+        $("#rotateTip").classList.add("is-alert");
+      }
+    });
+  }
 
   scenes.intro.addEventListener("click", () => goToBoard(true));
   reveal.addEventListener("click", closeCard);
@@ -399,6 +458,7 @@
       e.currentTarget.blur();
       const a = b.dataset.action;
       if (a === "strike") strike();
+      if (a === "sign") hostMove("scoutsign", 0);
       if (a === "music") toggleMusic();
       if (a === "fullscreen") toggleFullscreen();
       if (a === "help") toggleHelp();
@@ -432,8 +492,12 @@
       case "x": case "X": strike(); break;
       case "m": case "M": toggleMusic(); break;
       case "f": case "F": toggleFullscreen(); break;
-      case "a": case "A": Sound.applause(0, 3.5, 1); break;
-      case "o": case "O": Sound.ooh(); break;
+      case "a": case "A": Sound.applause(0, 3.5, 1); hostMove("clap", 3000); break;
+      case "o": case "O": Sound.ooh(); hostMove("gasp", 2000); break;
+      case "s": case "S": hostMove("scoutsign", 0); break;
+      case "e": case "E": hostMove("ear", 3000); break;
+      case "p": case "P": hostMove("point", 2500); break;
+      case "t": case "T": hostMove("thinking", 0); break;
       case "i": case "I": startIntro(); break;
       case "R": if (e.shiftKey) resetBoard(); break;
     }

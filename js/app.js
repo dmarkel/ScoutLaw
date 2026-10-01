@@ -136,6 +136,16 @@
   // ---------- Host poses ----------
   const poses = {};
   host.querySelectorAll(".pose").forEach((img) => { poses[img.dataset.pose] = img; });
+  LAWS.forEach((_, i) => {
+    const img = document.createElement("img");
+    img.className = "pose";
+    img.dataset.pose = `law-${i + 1}`;
+    img.src = lawPoseSrc(i);
+    img.alt = "";
+    img.decoding = "async";
+    host.querySelector(".host-figure").appendChild(img);
+    poses[img.dataset.pose] = img;
+  });
   let poseTimer;
 
   function setPose(name, motion) {
@@ -348,23 +358,31 @@
   }
 
   // ---------- Finale ----------
+  // Every pose he has (except standing still), for the celebration loop.
+  const CELEBRATE = ["cheer2", "dance", "clap", "thumbs", "laugh", "cheer", "wave", "point",
+    "scoutsign", "gasp", "ear", "present", "thinking", "shrug", "oops"];
+  const WORD_STEP = 750;
+  let finaleCycle;
+
   function startFinale() {
     finaleDone = false;
+    clearInterval(finaleCycle);
     finale.classList.remove("show-banner");
     const items = [...finaleWords.children];
     items.forEach((li) => li.classList.remove("on", "lit"));
     finale.classList.add("is-open");
     host.classList.add("on-top");
-    hostDo("thumbs");
+    hostDo("scoutsign");
     Sound.ooh();
     items.forEach((li, k) => {
-      at(700 + k * 420, () => {
+      at(900 + k * WORD_STEP, () => {
         li.classList.add("on", "lit");
         Sound.sparkle(0, 79 + (k % 6) * 2);
-        at(380, () => li.classList.remove("lit"));
+        hostDo(`law-${k + 1}`, 0, "hop");
+        at(500, () => li.classList.remove("lit"));
       });
     });
-    const end = 700 + items.length * 420 + 400;
+    const end = 900 + items.length * WORD_STEP + 500;
     at(end, () => {
       finale.classList.add("show-banner");
       items.forEach((li) => li.classList.add("lit"));
@@ -372,24 +390,70 @@
       Sound.cheer();
       Sound.applause(0.4, 6, 1);
       flashBulbs(4000);
-      hostDo("cheer2", 0, "hop");
-      at(1700, () => hostDo("dance"));
-      at(3400, () => hostDo("thumbs", 0, "hop"));
       Confetti.rain(7000);
+      let n = 0;
+      const next = () => { hostDo(CELEBRATE[n % CELEBRATE.length], 0, n % 2 ? null : "hop"); n++; };
+      next();
+      finaleCycle = setInterval(next, 1400);
+      finaleDone = true;
+      $("#playAgainBtn").focus({ preventScroll: true });
     });
-    at(end + 1500, () => { finaleDone = true; });
   }
 
   function closeFinale() {
     if (!finaleDone) return;
+    clearInterval(finaleCycle);
     finale.classList.remove("is-open");
     host.classList.remove("on-top");
+    touch();
     hostDo("idle");
     Sound.stopMusic(1.5);
   }
 
+  function playAgain() {
+    if (!finaleDone) return;
+    Sound.stopMusic(1);
+    resetBoard();
+    touch();
+    hostDo("wave", 2200);
+  }
+
+  // Shift+F: flip every card that's still closed, then go to the finale.
+  function revealAll() {
+    if (current === "splash" || busy || finale.classList.contains("is-open")) return;
+    if (current === "intro") {
+      goToBoard(true);
+      setTimeout(revealAll, 1300);
+      return;
+    }
+    reveal.classList.remove("is-open");
+    help.classList.remove("is-open");
+    touch();
+    const closed = slots.map((_, i) => i).filter((i) => !opened[i]);
+    const STAGGER = 140;
+    busy = true;
+    finaleShown = true;
+    if (closed.length) hostDo("present");
+    closed.forEach((i, k) => {
+      setTimeout(() => {
+        opened[i] = true;
+        slots[i].classList.add("is-open", "just-opened");
+        slots[i].setAttribute("aria-label", `Slot ${i + 1}: ${LAWS[i].name}`);
+        Sound.ding();
+        updateCount();
+        setTimeout(() => slots[i].classList.remove("just-opened"), 1400);
+      }, k * STAGGER);
+    });
+    const flipped = closed.length * STAGGER;
+    if (closed.length) {
+      setTimeout(() => { Sound.cheer(); flashBulbs(); hostDo("cheer2", 0, "hop"); }, flipped + 150);
+    }
+    setTimeout(() => { busy = false; startFinale(); }, closed.length ? flipped + 1600 : 0);
+  }
+
   // ---------- Misc controls ----------
   function closeAll() {
+    clearInterval(finaleCycle);
     host.classList.remove("on-top");
     reveal.classList.remove("is-open");
     finale.classList.remove("is-open");
@@ -397,6 +461,7 @@
   }
 
   function resetBoard() {
+    clearTimers();
     opened.fill(false);
     finaleShown = false;
     slots.forEach((s, i) => {
@@ -429,7 +494,6 @@
       .then(() => screen.orientation?.lock?.("landscape"))
       .catch(() => {});
     startIntro();
-    LAWS.forEach((_, i) => { new Image().src = lawPoseSrc(i); });
   });
 
   // Phones with auto-rotate off: on Android, go full screen and turn to landscape for them.
@@ -450,7 +514,8 @@
 
   scenes.intro.addEventListener("click", () => goToBoard(true));
   reveal.addEventListener("click", closeCard);
-  finale.addEventListener("click", closeFinale);
+  $("#playAgainBtn").addEventListener("click", playAgain);
+  $("#backToBoardBtn").addEventListener("click", closeFinale);
   help.addEventListener("click", (e) => { if (e.target === help) toggleHelp(); });
 
   document.querySelectorAll(".dock button").forEach((b) => {
@@ -483,10 +548,11 @@
     if (k === " " || k === "Enter" || k === "Escape") {
       e.preventDefault();
       if (reveal.classList.contains("is-open")) closeCard();
-      else if (finale.classList.contains("is-open")) closeFinale();
+      else if (finale.classList.contains("is-open")) (k === "Enter" ? playAgain() : closeFinale());
       else if (current === "intro") goToBoard(true);
       return;
     }
+    if (k === "F" && e.shiftKey) { revealAll(); return; }
     if (k in KEY_TO_SLOT) { revealLaw(KEY_TO_SLOT[k]); return; }
     switch (k) {
       case "x": case "X": strike(); break;

@@ -11,7 +11,7 @@ A game-show style board for teaching the 12 points of the Scout Law to Cub Scout
 3. Ask a Scout to name a point of the Scout Law. Click that slot (or press its number key). The slot flips, the crowd cheers, and a big card explains the law.
 4. Click or press **Space** to close the card and go back to the board.
 5. Guessed something that isn't in the Scout Law? Press **X** for the buzzer.
-6. When all 12 are found, the whole Scout Law lights up with confetti.
+6. When all 12 are found, the whole Scout Law lights up with confetti while the Cubmaster acts out each law. Press **Play again** to reset the board for another round.
 
 ## Slot numbers (Scout Law order)
 
@@ -31,6 +31,7 @@ A game-show style board for teaching the 12 points of the Scout Law to Cub Scout
 | `1`–`9`, `0`, `-`, `=` | Reveal slot 1–12 |
 | `X` | Wrong answer buzzer |
 | `Space` / `Esc` | Close the card |
+| `Shift` + `F` | Flip every card and jump to the finale |
 | `A` / `O` | Applause / crowd "ooooh" (the host claps / gasps) |
 | `S` | Host gives the Scout sign to quiet the room (press again to put it down) |
 | `E` | Host cups his ear: "I can't hear you!" |

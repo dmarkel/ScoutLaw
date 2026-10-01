@@ -382,7 +382,10 @@
   // ---------- Input ----------
   $("#startBtn").addEventListener("click", async () => {
     await Sound.init();
-    document.documentElement.requestFullscreen?.().catch(() => {});
+    // Full screen, and on phones that allow it (Android), stay in landscape.
+    document.documentElement.requestFullscreen?.()
+      .then(() => screen.orientation?.lock?.("landscape"))
+      .catch(() => {});
     startIntro();
   });
 

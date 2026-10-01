@@ -744,3 +744,82 @@ kbd {
 @media (prefers-reduced-motion: reduce) {
   .rays, .spot, .bulb, .host-figure, .pose { animation: none !important; }
 }
+
+/* ---------- "Turn your phone sideways" ---------- */
+.rotate {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  place-content: center;
+  justify-items: center;
+  gap: 28px;
+  padding: 24px 16px;
+  text-align: center;
+  background:
+    repeating-conic-gradient(from 0deg at 50% 45%, rgba(91, 147, 255, .12) 0deg 7deg, transparent 7deg 15deg),
+    radial-gradient(ellipse at 50% 40%, #1d3fa8 0%, var(--navy) 50%, var(--night) 100%);
+}
+.rotate .logo-top { font-size: 30px; }
+.rotate .logo-main { font-size: 84px; }
+.rotate-phone {
+  position: relative;
+  width: 64px;
+  height: 112px;
+  border: 6px solid var(--white);
+  border-radius: 16px;
+  box-shadow: 0 0 0 4px var(--gold), 0 0 30px rgba(255, 201, 52, .4);
+  animation: turn 2.6s ease-in-out infinite;
+}
+.rotate-screen {
+  position: absolute;
+  inset: 8px 4px;
+  border-radius: 4px;
+  background: linear-gradient(#3b7bff, var(--royal));
+}
+.rotate-phone::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 3px;
+  width: 14px;
+  height: 3px;
+  margin-left: -7px;
+  border-radius: 2px;
+  background: var(--white);
+}
+@keyframes turn {
+  0%, 20% { transform: rotate(0); }
+  45%, 80% { transform: rotate(-90deg); }
+  100% { transform: rotate(0); }
+}
+.rotate-title {
+  margin: 0;
+  font-family: var(--font-logo);
+  font-size: 30px;
+  line-height: 1.15;
+  color: var(--gold);
+  text-shadow: 0 3px 0 var(--night);
+}
+.rotate-sub {
+  margin: -16px 0 0;
+  max-width: 300px;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--bulb);
+}
+
+/* Touch devices held upright only — a narrow desktop window still works. */
+@media (orientation: portrait) and (pointer: coarse) {
+  .rotate { display: grid; }
+  #stage { visibility: hidden; }
+}
+
+/* Phones turned sideways: the screen is very short, so tighten things up. */
+@media (orientation: landscape) and (max-height: 500px) {
+  #board { padding: 2vh 2vw 2vh 21vw; }
+  .board-frame { padding: 3vh 2.4vh; gap: 1.4vh; }
+  .host.at-board { height: 92vh; }
+  .law-card { padding: 5vmin 5vmin 7vmin; gap: 3vmin; min-height: 0; }
+  .card-meaning { margin-bottom: 3vmin; }
+}

@@ -401,39 +401,43 @@ kbd {
   bottom: 1vh;
   left: 108vw;
   height: 74vh;
-  aspect-ratio: 300 / 620;
+  aspect-ratio: 941 / 1672;
   transition: left 1.6s cubic-bezier(.4, 0, .3, 1), height 1s ease, bottom 1s ease;
   pointer-events: none;
-  filter: drop-shadow(0 1vh 2vh rgba(0, 0, 0, .45));
+  filter: drop-shadow(0 1.2vh 1.6vh rgba(0, 0, 0, .5));
 }
-.host svg { width: 100%; height: 100%; overflow: visible; }
-.host.at-intro { left: 72vw; }
-.host.at-board { left: 1vw; height: min(80vh, 46vw); bottom: 1vh; }
-.host.walking .body { animation: walk .32s ease-in-out infinite alternate; }
-@keyframes walk { to { transform: translateY(-2.5%) rotate(-1.5deg); } }
+.host.at-intro { left: 70vw; }
+.host.at-board { left: 0; height: min(82vh, 44vw); bottom: 1vh; }
+.host.on-top { z-index: 25; }
 
-.host .body { transform-origin: 150px 590px; animation: breathe 3s ease-in-out infinite; }
-@keyframes breathe { 50% { transform: scaleY(1.012); } }
-.host .arm-wave { transform-origin: 197px 214px; transition: transform .4s; }
-.host .arm-mic { transform-origin: 103px 214px; }
-.host .head { transform-origin: 150px 170px; }
-.host .eyes { transform-origin: 150px 120px; animation: blink 4.5s infinite; }
-@keyframes blink { 0%, 95%, 100% { transform: scaleY(1); } 97% { transform: scaleY(.1); } }
-.host .sweat { opacity: 0; }
+.host-figure {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 100%;
+  animation: breathe 3.2s ease-in-out infinite;
+}
+@keyframes breathe { 50% { transform: scale(1.012, 1.018); } }
 
-.host.wave .arm-wave { animation: wave .5s ease-in-out infinite alternate; }
-@keyframes wave { from { transform: rotate(-135deg); } to { transform: rotate(-165deg); } }
+.pose {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: 50% 100%;
+  visibility: hidden;
+}
+.pose.is-shown { visibility: visible; }
+.pose.pop { animation: pop .32s var(--ease-pop); transform-origin: 50% 100%; }
+@keyframes pop { from { transform: scale(.94, 1.05); } }
 
-.host.cheer .body { animation: hop .38s ease-in-out 3 alternate; }
-.host.cheer .arm-wave { animation: fist .19s ease-in-out 6 alternate; }
-@keyframes hop { to { transform: translateY(-7%); } }
-@keyframes fist { from { transform: rotate(-150deg); } to { transform: rotate(-175deg); } }
-
-.host.oops .head { animation: shake .16s ease-in-out 6 alternate; }
-.host.oops .sweat { opacity: 1; transition: opacity .2s; }
-.host.oops .body { animation: slump 1.2s ease-out; }
-@keyframes shake { from { transform: rotate(-7deg); } to { transform: rotate(7deg); } }
-@keyframes slump { 30%, 70% { transform: scaleY(.96) translateY(1%); } }
+.host.walking .host-figure { animation: walk .3s ease-in-out infinite alternate; }
+@keyframes walk { from { transform: translateY(0) rotate(-1.2deg); } to { transform: translateY(-2.2%) rotate(1.2deg); } }
+.host.hop .host-figure { animation: hop .3s ease-in-out 4 alternate; }
+@keyframes hop { to { transform: translateY(-5%); } }
+.host.shake .host-figure { animation: shake .09s ease-in-out 8 alternate; }
+@keyframes shake { from { transform: translateX(-1%); } to { transform: translateX(1%); } }
 
 /* ---------- Strike ---------- */
 .strike {
@@ -612,6 +616,11 @@ kbd {
 /* Finale */
 .finale { cursor: pointer; background: rgba(2, 6, 24, .82); }
 .finale-inner { text-align: center; width: min(94vw, 180vh); }
+@media (min-aspect-ratio: 1/1) {
+  .finale-inner { width: calc(100vw - min(30vw, 50vh) - 6vw); margin-left: min(30vw, 50vh); }
+  .finale-words li { font-size: min(6vmin, 2.9vw); }
+  .finale-lead, .finale-banner { font-size: min(7vmin, 4.4vw); }
+}
 .finale-lead {
   margin: 0 0 3vmin;
   font-family: var(--font-logo);
@@ -733,5 +742,5 @@ kbd {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rays, .spot, .bulb, .host .body, .host .eyes { animation: none !important; }
+  .rays, .spot, .bulb, .host-figure, .pose { animation: none !important; }
 }

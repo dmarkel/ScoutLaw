@@ -133,19 +133,37 @@
     Object.entries(scenes).forEach(([k, el]) => el.classList.toggle("is-active", k === name));
   }
 
+  // ---------- Host poses ----------
+  const poses = {};
+  host.querySelectorAll(".pose").forEach((img) => { poses[img.dataset.pose] = img; });
+  let poseTimer;
+
+  function setPose(name, motion) {
+    Object.entries(poses).forEach(([k, img]) => img.classList.toggle("is-shown", k === name));
+    const img = poses[name];
+    img.classList.remove("pop");
+    void img.offsetWidth;
+    img.classList.add("pop");
+    host.classList.remove("hop", "shake");
+    if (motion) {
+      void host.offsetWidth;
+      host.classList.add(motion);
+    }
+  }
+
+  // Show a pose; after `ms` (if given) go back to standing with the mic.
+  function hostDo(name, ms, motion) {
+    clearTimeout(poseTimer);
+    setPose(name, motion);
+    if (ms) poseTimer = setTimeout(() => setPose("idle"), ms);
+  }
+
   function resetHost() {
     host.style.transition = "none";
     host.className = "host";
+    hostDo("idle");
     void host.offsetWidth;
     host.style.transition = "";
-  }
-
-  function hostDo(cls, ms) {
-    host.classList.remove("wave", "cheer", "oops");
-    void host.offsetWidth;
-    host.classList.add(cls);
-    clearTimeout(hostDo.t);
-    hostDo.t = setTimeout(() => host.classList.remove(cls), ms);
   }
 
   // ---------- Opening ----------
@@ -163,7 +181,7 @@
     at(80, () => scenes.intro.classList.add("step-1"));
     at(640, () => { scenes.intro.classList.add("step-2"); flashBulbs(900); });
     at(3300, () => host.classList.add("at-intro", "walking"));
-    at(4900, () => { host.classList.remove("walking"); host.classList.add("wave"); });
+    at(4900, () => { host.classList.remove("walking"); hostDo("wave"); });
     at(8200, () => Sound.ooh());
     at(10200, () => Sound.applause(0, 6, 0.55));
     at(13400, () => goToBoard(false));
@@ -174,7 +192,8 @@
     clearTimers();
     if (skipped) Sound.stopMusic(1.2);
     scenes.intro.classList.add("step-4");
-    host.classList.remove("wave", "at-intro");
+    hostDo("idle");
+    host.classList.remove("at-intro");
     host.classList.add("at-board", "walking");
     at(700, () => {
       show("board");
@@ -206,23 +225,25 @@
     const slot = slots[i];
     if (opened[i]) {
       Sound.ding();
+      hostDo("present", 1400);
       openCard(i);
       return;
     }
     busy = true;
     opened[i] = true;
     Sound.flip();
+    hostDo("present");
     slot.classList.add("is-open", "just-opened");
     slot.setAttribute("aria-label", `Slot ${i + 1}: ${LAWS[i].name}`);
     setTimeout(() => {
       Sound.ding();
       Sound.cheer();
       flashBulbs();
-      hostDo("cheer", 1500);
       updateCount();
       const r = slot.getBoundingClientRect();
       Confetti.burst(r.left + r.width / 2, r.top + r.height / 2, 90);
     }, 330);
+    setTimeout(() => hostDo("cheer", 1800, "hop"), 650);
     setTimeout(() => slot.classList.remove("just-opened"), 1800);
     setTimeout(() => { openCard(i); busy = false; }, 1500);
   }
@@ -276,7 +297,7 @@
     }
     Sound.buzzer();
     Sound.aww();
-    hostDo("oops", 1300);
+    hostDo("oops", 1700, "shake");
     clearTimeout(strikeTimer);
     strikeTimer = setTimeout(() => {
       strikeEl.querySelectorAll(".x-box").forEach((x) => x.classList.add("out"));
@@ -292,6 +313,8 @@
     const items = [...finaleWords.children];
     items.forEach((li) => li.classList.remove("on", "lit"));
     finale.classList.add("is-open");
+    host.classList.add("on-top");
+    hostDo("thumbs");
     Sound.ooh();
     items.forEach((li, k) => {
       at(700 + k * 420, () => {
@@ -308,7 +331,8 @@
       Sound.cheer();
       Sound.applause(0.4, 6, 1);
       flashBulbs(4000);
-      hostDo("cheer", 2400);
+      hostDo("cheer", 0, "hop");
+      at(2600, () => hostDo("thumbs"));
       Confetti.rain(7000);
     });
     at(end + 1500, () => { finaleDone = true; });
@@ -317,11 +341,14 @@
   function closeFinale() {
     if (!finaleDone) return;
     finale.classList.remove("is-open");
+    host.classList.remove("on-top");
+    hostDo("idle");
     Sound.stopMusic(1.5);
   }
 
   // ---------- Misc controls ----------
   function closeAll() {
+    host.classList.remove("on-top");
     reveal.classList.remove("is-open");
     finale.classList.remove("is-open");
     help.classList.remove("is-open");
